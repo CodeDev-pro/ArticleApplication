@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <variable
+            name="viewModel"
+            type="com.main.notificationapp.ui.viewmodels.MainViewModel" />
+    </data>
+    
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.fragments.SearchNewsFragment">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/search_layout">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/card_view"
+                app:cardElevation="3dp">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:id="@+id/toolbar_search"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetRight="0dp"
+                    android:layout_alignParentTop="true"
+                    app:contentInsetStart="0dp"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:titleTextAppearance="@style/Base.TextAppearance.Widget.AppCompat.Toolbar.Title">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:padding="7dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toStartOf="@+id/image_options"
+                            android:layout_marginStart="4dp"
+                            android:background="@drawable/search_block"
+                            android:padding="2dp">
+
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="4dp"
+                                android:maxLines="1"
+                                android:textColor="@android:color/black"
+                                android:layout_toStartOf="@+id/search_image"
+                                android:hint="Search"
+                                android:background="@android:color/white"
+                                android:layout_centerVertical="true"
+                                android:id="@+id/search_field"/>
+
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_alignParentEnd="true"
+                                android:src="@drawable/ic_search"
+                                android:scaleType="center"
+                                android:layout_margin="5dp"
+                                android:id="@+id/search_image"
+                                app:tint="@android:color/black" />
+
+                        </RelativeLayout>
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="1dp"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_options"
+                            android:layout_centerVertical="true"
+                            android:id="@+id/image_options"
+                            app:tint="@android:color/black" />
+
+                    </RelativeLayout>
+
+                </androidx.appcompat.widget.Toolbar>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/card_view"
+                android:background="@android:color/white"
+                android:layout_marginTop="5dp"
+                android:layout_above="@+id/progress_bar"
+                android:id="@+id/recycler_view_saved"/>
+
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/progress_bar"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:layout_centerInParent="true"
+                android:id="@+id/refresh_layout">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:scaleType="centerCrop"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="20dp"
+                    android:alpha="0.3"
+                    android:src="@drawable/no_connection"
+                    android:padding="4dp"
+                    android:id="@+id/refresh"/>
+
+                <Button
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="-50dp"
+                    android:text="Retry"
+                    android:textSize="15sp"
+                    android:background="@drawable/background_ok"
+                    android:textColor="@android:color/white"
+                    android:id="@+id/button_ok"/>
+
+            </RelativeLayout>
+            
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</layout>

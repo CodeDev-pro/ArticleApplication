@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.main.notificationapp.ui.viewmodels.MainViewModel" />
+    </data>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.fragments.ProfileFragment">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_your_country"
+            android:layout_marginTop="100dp"
+            android:id="@+id/choose"
+            android:layout_centerHorizontal="true"
+            android:textSize="24sp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/country_text"
+            android:background="@drawable/search_block"
+            android:hint="@{viewModel.currentCountry}"
+            android:textSize="20sp"
+            android:padding="10dp"
+            android:layout_below="@+id/choose"
+            android:layout_marginTop="20dp"
+            android:layout_margin="20dp"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/country_text"
+            android:layout_centerHorizontal="true"
+            android:text="@string/ok"
+            android:textSize="15sp"
+            android:background="@drawable/background_ok"
+            android:textColor="@android:color/white"
+            android:id="@+id/button_ok"/>
+
+    </RelativeLayout>
+
+</layout>

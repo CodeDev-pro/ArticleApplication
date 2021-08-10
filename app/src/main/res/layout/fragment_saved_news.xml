@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.fragments.SavedNewsFragment">
+
+        <!-- TODO: Update blank fragment layout -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:id="@+id/recycler_view_saved"/>
+
+        <ProgressBar
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:id="@+id/progress_bar"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+        <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:id="@+id/refresh_layout">
+
+            <View
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="-20dp"
+                android:src="@drawable/ic_news"
+                android:background="@drawable/circle"
+                android:padding="10dp" />
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="-20dp"
+                android:src="@drawable/ic_news"
+                android:padding="10dp"
+                android:id="@+id/refresh"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No Saved News Yet"
+                android:layout_centerInParent="true"
+                android:layout_below="@id/refresh"
+                android:id="@+id/no_saved_articles"
+                android:layout_marginTop="20dp"
+                android:textSize="19sp"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/no_saved_articles"
+                android:layout_marginTop="10dp"
+                android:text="Browse Articles"
+                android:paddingHorizontal="10dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="15sp"
+                android:background="@drawable/background_ok"
+                android:textColor="@android:color/white"
+                android:id="@+id/browse_articles"/>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</layout>

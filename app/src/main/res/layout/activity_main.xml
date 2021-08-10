@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.activities.MainActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:id="@+id/app_bar">
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/toolbar"/>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <androidx.fragment.app.FragmentContainerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/nav_host_fragment"
+            android:layout_below="@id/app_bar"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            app:defaultNavHost="true"
+            android:layout_above="@+id/bottom_bar"
+            app:navGraph="@navigation/nav_graph"/>
+
+        <me.ibrahimsn.lib.SmoothBottomBar
+            android:id="@+id/bottom_bar"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            app:menu="@menu/menu"
+            app:indicatorColor="@color/colorLight"
+            app:indicatorRadius="5dp"
+            app:iconTint="#C8FFFFFF"
+            app:iconTintActive="#FFFFFF"
+            app:textSize="12sp"
+            app:iconSize="21dp"
+            app:itemPadding="12dp"
+            app:sideMargins="10dp"
+            android:layout_alignParentBottom="true"
+            app:backgroundColor="@color/colorPrimary"/>
+
+    </RelativeLayout>
+</layout>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NotificationApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="choose_your_country">Choose Your Country</string>
+    <string name="ok">OK</string>
+</resources>
