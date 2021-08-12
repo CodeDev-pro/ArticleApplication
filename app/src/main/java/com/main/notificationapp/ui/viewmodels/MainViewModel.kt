@@ -9,6 +9,9 @@ import com.main.notificationapp.models.NewsResponse
 import com.main.notificationapp.models.SourcesResponse
 import com.main.notificationapp.repositories.DatastoreRepository
 import com.main.notificationapp.repositories.MainRepository
+import com.main.notificationapp.utils.Constants.ERROR
+import com.main.notificationapp.utils.Constants.INIT
+import com.main.notificationapp.utils.Constants.LOADING
 import com.main.notificationapp.utils.DatastoreOperations
 import com.main.notificationapp.utils.NewsCacheOperations
 import com.main.notificationapp.utils.Resources
@@ -40,9 +43,16 @@ class MainViewModel
     var topHeadlinesFirstLaunch = true
     var sourcesFirstLaunch = true
     var searchFragmentFirstLaunch = true
+
+    var savedNewsState = INIT
+    var topHeadlinesState = INIT
+    var sourcesState = INIT
+    var searchState = INIT
     //val profileFragmentFirstLaunch = MutableLiveData(false)
     val currentCountry = MutableLiveData("Current Country: us")
 
+    private val _topHeadlinesLastValue: MutableLiveData<NewsCacheOperations> = MutableLiveData()
+    val topHeadlinesLastValue get() = _topHeadlinesLastValue
 
     private val _cacheOperation: Channel<NewsCacheOperations> = Channel()
     val cacheOperations get() = _cacheOperation.receiveAsFlow()
@@ -84,18 +94,6 @@ class MainViewModel
 
     init {
         checkLoginState()
-        if(topHeadlinesFirstLaunch) {
-            safeTopHeadlinesCall(page = 1)
-            topHeadlinesFirstLaunch = false
-        }
-        if(savedNewsFirstLaunch) {
-            getAllCacheArticles()
-            savedNewsFirstLaunch = false
-        }
-        if(sourcesFirstLaunch) {
-            getArticleSources()
-            sourcesFirstLaunch = false
-        }
     }
 
     fun initState() {
@@ -127,20 +125,32 @@ class MainViewModel
         }
     }
 
+    fun getMoreArticles() = viewModelScope.launch {
+        _topHeadlinesLastValue.value = NewsCacheOperations.Loading
+        delay(5000)
+        _topHeadlinesLastValue.value = NewsCacheOperations.Success("successful")
+
+    }
+
 
     fun safeSearchArticleCall(keyword: String, page: Int) = viewModelScope.launch {
+        if(searchState == ERROR) {
+            _searchedArticles.postValue(Resources.Error("An Unknown Error Occurred"))
+        } else {
+            repository.searchArticle(keyword, page).collectAndExecute(
+                _liveData = _searchedArticles,
+                getApplication()
+            ) {
 
-        repository.searchArticle(keyword, page).collectAndExecute(
-            _liveData = _searchedArticles,
-            getApplication()
-        ) {
-
+            }
         }
     }
 
     fun safeTopHeadlinesCall(page: Int) = viewModelScope.launch {
         Log.d(TAG, "safe")
-        try {
+        if(topHeadlinesState == ERROR) {
+            _topHeadlinesArticles.postValue(Resources.Error("An Unknown Error Occurred"))
+        } else {
             val country = currentCountry.value?.replace("Current Country: ", "") ?: "us"
             repository.getTopHeadlines(country, page).collectAndExecute(
                 _liveData = _topHeadlinesArticles,
@@ -149,8 +159,6 @@ class MainViewModel
                 Log.d(TAG, "safeTopHeadlinesCall: ${it.data.toString()}")
                 _notificationArticle.send(it.data.articles[Random(10).nextInt()])
             }
-        }catch (e: Exception) {
-            Timber.d("Error $e")
         }
     }
 
@@ -175,11 +183,15 @@ class MainViewModel
     }
 
     fun getAllCacheArticles() = viewModelScope.launch {
-        repository.getAllCacheArticles().collectAndExecute(
-            _liveData = _cacheArticles,
-            getApplication()
-        ) {
+        if(savedNewsState == ERROR) {
+            _cacheArticles.postValue(Resources.Error("An Unknown Error Occurred"))
+        }else {
+            repository.getAllCacheArticles().collectAndExecute(
+                _liveData = _cacheArticles,
+                getApplication()
+            ) {
 
+            }
         }
     }
 
@@ -194,11 +206,15 @@ class MainViewModel
     }
 
     fun getArticleSources() = viewModelScope.launch {
-        repository.getSources().collectAndExecute(
-            _liveData = _sources,
-            getApplication(),
-        ){
+        if(sourcesState == ERROR) {
+            _sources.postValue(Resources.Error("An Unknown Error Occurred"))
+        }else {
+            repository.getSources().collectAndExecute(
+                _liveData = _sources,
+                getApplication(),
+            ){
 
+            }
         }
     }
 

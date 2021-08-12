@@ -15,6 +15,7 @@
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:titleTextColor="@android:color/white"
                 android:id="@+id/toolbar"/>
 
         </com.google.android.material.appbar.AppBarLayout>

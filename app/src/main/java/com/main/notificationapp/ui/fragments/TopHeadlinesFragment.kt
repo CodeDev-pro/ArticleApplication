@@ -23,6 +23,9 @@ import com.main.notificationapp.ui.activities.MainActivity
 import com.main.notificationapp.ui.adapters.NewsAdapter
 import com.main.notificationapp.ui.adapters.NewsItemClickListener
 import com.main.notificationapp.ui.viewmodels.MainViewModel
+import com.main.notificationapp.utils.Constants.ERROR
+import com.main.notificationapp.utils.Constants.LOADING
+import com.main.notificationapp.utils.Constants.SUCCESS
 import com.main.notificationapp.utils.DatastoreOperations
 import com.main.notificationapp.utils.Resources
 import com.main.notificationapp.utils.SharedResources
@@ -52,10 +55,16 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines), NewsItem
 
         _binding = FragmentTopHeadlinesBinding.bind(view)
 
-        adapter = NewsAdapter()
+        adapter = NewsAdapter(lifecycleOwner = viewLifecycleOwner, viewModel = viewModel)
 
         adapter.itemClickListener = this
         setUpRecyclerView()
+
+        viewModel.safeTopHeadlinesCall(1)
+
+        binding.buttonOk.setOnClickListener {
+            viewModel.safeTopHeadlinesCall(1)
+        }
 
         //viewModel.updateUserInfo(args.country ?: "us", false)
 
@@ -65,14 +74,17 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines), NewsItem
             when(resources) {
                 is Resources.Loading -> {
                     Log.d(TAG, "onViewCreated: loading")
+                    viewModel.topHeadlinesState = LOADING
                     onProgress()
                 }
                 is Resources.Success -> {
                     Log.d(TAG, "onViewCreated: ${resources.data.toString()}")
+                    viewModel.topHeadlinesState = SUCCESS
                     onSuccess(resources.data)
                 }
                 is Resources.Error -> {
                     Log.d(TAG, "onViewCreated: error ${resources.toString()}")
+                    viewModel.topHeadlinesState = ERROR
                     onFailure(resources.message ?: "")
                 }
                 is Resources.InitialState -> {
@@ -96,9 +108,7 @@ class TopHeadlinesFragment : Fragment(R.layout.fragment_top_headlines), NewsItem
 
                 val currentPosition = layoutManager.findLastCompletelyVisibleItemPosition()
                 if(currentPosition == (adapter.diffList.currentList.size - 1)) {
-                    binding.progressBarBottom.visibility = View.VISIBLE
-                } else {
-                    binding.progressBarBottom.visibility = View.VISIBLE
+                    viewModel.getMoreArticles()
                 }
             }
         })

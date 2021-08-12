@@ -1,6 +1,7 @@
 package com.main.notificationapp.ui.fragments
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.main.notificationapp.R
 import com.main.notificationapp.databinding.FragmentProfileBinding
 import com.main.notificationapp.ui.activities.MainActivity
@@ -32,7 +34,8 @@ private const val TAG = "ProfileFragment"
 @AndroidEntryPoint
 class ProfileFragment : Fragment(R.layout.fragment_profile) {
     private lateinit var viewModel: MainViewModel
-    private lateinit var alertDialog: AlertDialog
+    //private lateinit var alertDialog: AlertDialog
+    private lateinit var progressDialog: ProgressDialog
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -42,12 +45,17 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         _binding = FragmentProfileBinding.bind(view)
 
+        progressDialog = ProgressDialog(requireContext()).apply {
+            setTitle("Updating Profile...")
+            setCanceledOnTouchOutside(false)
+        }
+
         viewModel = (activity as MainActivity).viewModel
-        val builder = AlertDialog.Builder(requireContext())
-        val customLayout = (activity as MainActivity).layoutInflater.inflate(R.layout.custom_layout, null)
+        //val builder = AlertDialog.Builder(requireContext())
+        /*val customLayout = (activity as MainActivity).layoutInflater.inflate(R.layout.custom_layout, null)
         builder.setView(customLayout)
-        builder.setCancelable(false)
-        alertDialog = builder.create()
+        builder.setCancelable(false)*/
+        //alertDialog = builder.create()
 
         binding.buttonOk.setOnClickListener{
             val text = binding.countryText.text.toString()
@@ -70,12 +78,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     }
 
     private fun onProgress() {
-        alertDialog.show()
+        progressDialog.show()
     }
 
     private fun onSuccess() {
-        alertDialog.dismiss()
-        Toast.makeText(requireContext(), "Successfully Updated Location", Toast.LENGTH_SHORT).show()
+        view?.let { Snackbar.make(it, "Successfully Updated Location", Snackbar.LENGTH_SHORT).show() }
         if(viewModel.isFirstLogIn) {
             val action = ProfileFragmentDirections.actionProfileFragmentToTopHeadlinesFragment(binding.countryText.text.toString())
             viewModel.isFirstLogIn = false
@@ -85,7 +92,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
     }
 
     private fun onFailure(message: String) {
-        alertDialog.dismiss()
+        progressDialog.dismiss()
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 

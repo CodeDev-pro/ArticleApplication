@@ -1,16 +1,28 @@
 package com.main.notificationapp.ui.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.main.notificationapp.databinding.FirstItemLayoutBinding
 import com.main.notificationapp.databinding.ItemLayoutBinding
+import com.main.notificationapp.databinding.LayoutLastItemBinding
+import com.main.notificationapp.databinding.LayoutSourcesItemBinding
 import com.main.notificationapp.models.Article
+import com.main.notificationapp.ui.viewmodels.MainViewModel
+import com.main.notificationapp.utils.NewsCacheOperations
 import java.util.*
 
-class NewsAdapter(var isSavedFragment: Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+class NewsAdapter(
+    var isSavedFragment: Boolean = false,
+    private val lifecycleOwner: LifecycleOwner? = null,
+    private val viewModel: MainViewModel? = null
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     var itemClickListener: NewsItemClickListener? = null
     private val itemCallback = object: DiffUtil.ItemCallback<Article>(){
@@ -31,7 +43,11 @@ class NewsAdapter(var isSavedFragment: Boolean = false) : RecyclerView.Adapter<R
             FirstItemViewHolder(
                 FirstItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
-        }else{
+        }else if(viewType == 2){
+            LastItemViewHolder(
+                LayoutLastItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        } else {
             ItemViewHolder(
                 ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
@@ -43,6 +59,28 @@ class NewsAdapter(var isSavedFragment: Boolean = false) : RecyclerView.Adapter<R
             publishedAt.replace("T", " ")
                 .replace("Z", " ")
         }
+
+        if(!isSavedFragment) {
+            viewModel?.topHeadlinesLastValue?.observe(lifecycleOwner!!) {
+                when(it) {
+                    is NewsCacheOperations.Loading -> {
+                        (holder as LastItemViewHolder).show()
+                    }
+                    is NewsCacheOperations.Error -> {
+                        (holder as LastItemViewHolder).hide()
+                        Snackbar.make(holder.itemView, "An Unknown Error Occurred, Please try again", Snackbar.LENGTH_LONG).apply {
+                            setAction("Retry") {
+                                viewModel.getMoreArticles()
+                            }
+                        }.show()
+                    }
+                    is NewsCacheOperations.Success -> {
+                        (holder as LastItemViewHolder).hide()
+                    }
+                }
+            }
+        }
+
         val random = Random().nextInt(10)
         when(holder){
             is ItemViewHolder ->{
@@ -67,6 +105,9 @@ class NewsAdapter(var isSavedFragment: Boolean = false) : RecyclerView.Adapter<R
                     }
                 }
             }
+            is LastItemViewHolder -> {
+
+            }
         }
     }
 
@@ -76,7 +117,8 @@ class NewsAdapter(var isSavedFragment: Boolean = false) : RecyclerView.Adapter<R
 
     override fun getItemViewType(position: Int): Int {
         return if (position == 0 && !isSavedFragment) 1
-        else 2
+        else if(position == diffList.currentList.size) 2
+        else 3
     }
 
     inner class ItemViewHolder(private val binding: ItemLayoutBinding) : RecyclerView.ViewHolder(binding.root){
@@ -92,6 +134,17 @@ class NewsAdapter(var isSavedFragment: Boolean = false) : RecyclerView.Adapter<R
         fun bind(article: Article){
             binding.article = article
             binding.executePendingBindings()
+        }
+    }
+
+    inner class LastItemViewHolder(private val binding: LayoutLastItemBinding) : RecyclerView.ViewHolder(binding.root){
+
+        fun show(){
+            binding.progressBar.visibility = View.VISIBLE
+        }
+
+        fun hide() {
+            binding.progressBar.visibility = View.GONE
         }
     }
 }

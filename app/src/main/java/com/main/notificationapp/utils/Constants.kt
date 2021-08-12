@@ -13,4 +13,8 @@ object Constants {
     const val API_KEY = "4fab21168bb2445c8b9797212e0b0e96"
     const val BASE_URL = "https://newsapi.org/"
     const val NO_INTERNET_CONNECTION = "No I"
+    const val LOADING = "loading"
+    const val ERROR = "error"
+    const val SUCCESS = "success"
+    const val INIT = "init"
 }

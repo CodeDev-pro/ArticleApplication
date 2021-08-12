@@ -3,6 +3,7 @@ package com.main.notificationapp.ui.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.PopupMenu
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
@@ -24,6 +25,8 @@ import com.main.notificationapp.utils.Constants.UPDATED
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
+private const val TAG = "MainActivity"
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -44,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(R.id.topHeadlinesFragment, R.id.savedNewsFragment, R.id.searchNewsFragment, R.id.sourcesFragment, R.id.profileFragment)
         )
+        
+        setSupportActionBar(binding.toolbar)
 
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
 
@@ -67,7 +72,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launchWhenStarted {
+            Log.d(TAG, "onCreate: courotine started")
             viewModel.notificationArticle.collect {
+                Log.d(TAG, "onCreate: ${it.title}")
                 updateService(it)
             }
         }

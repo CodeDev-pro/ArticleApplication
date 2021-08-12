@@ -25,6 +25,7 @@ import com.main.notificationapp.ui.activities.MainActivity
 import com.main.notificationapp.ui.adapters.NewsAdapter
 import com.main.notificationapp.ui.adapters.NewsItemClickListener
 import com.main.notificationapp.ui.viewmodels.MainViewModel
+import com.main.notificationapp.utils.Constants
 import com.main.notificationapp.utils.NewsCacheOperations
 import com.main.notificationapp.utils.Resources
 import com.main.notificationapp.utils.SharedResources
@@ -58,7 +59,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news), NewsItemClickL
         adapter.itemClickListener = this
         setUpRecyclerView()
 
-        //viewModel.getAllCacheArticles()
+        viewModel.getAllCacheArticles()
 
         binding.browseArticles.setOnClickListener {
 
@@ -69,14 +70,17 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news), NewsItemClickL
         ){ resources ->
             when(resources) {
                 is Resources.Loading -> {
+                    viewModel.savedNewsState = Constants.LOADING
                     Log.d(TAG, "onViewCreated: loading")
                     onProgress()
                 }
                 is Resources.Success -> {
+                    viewModel.savedNewsState = Constants.SUCCESS
                     Log.d(TAG, "onViewCreated: success ${resources.toString()}")
                     onSuccess(resources.data)
                 }
                 is Resources.Error -> {
+                    viewModel.savedNewsState = Constants.ERROR
                     Log.d(TAG, "onViewCreated: error ${resources.toString()}")
                     onFailure(resources.message ?: "")
                 }
@@ -137,6 +141,11 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news), NewsItemClickL
     override fun onPause() {
         super.onPause()
         viewModel.initState()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("state", viewModel.savedNewsState)
     }
 
     private fun setUpRecyclerView() {

@@ -27,6 +27,7 @@ import com.main.notificationapp.ui.adapters.NewsAdapter
 import com.main.notificationapp.ui.adapters.SourceItemClickListener
 import com.main.notificationapp.ui.adapters.SourcesAdapter
 import com.main.notificationapp.ui.viewmodels.MainViewModel
+import com.main.notificationapp.utils.Constants
 import com.main.notificationapp.utils.Resources
 import com.main.notificationapp.utils.SharedResources
 import com.main.notificationapp.utils.SharedResources.observeAndExecute
@@ -52,6 +53,12 @@ class SourcesFragment : Fragment(R.layout.fragment_sources), SourceItemClickList
         adapter = SourcesAdapter()
         adapter.itemClickListener = this
 
+        viewModel.getArticleSources()
+
+        binding.buttonOk.setOnClickListener {
+            viewModel.getArticleSources()
+        }
+
         setUpRecyclerView()
 
         viewModel.sources.observe(
@@ -59,14 +66,17 @@ class SourcesFragment : Fragment(R.layout.fragment_sources), SourceItemClickList
         ){ resources ->
             when(resources) {
                 is Resources.Loading -> {
+                    viewModel.sourcesState = Constants.LOADING
                     Log.d(TAG, "onViewCreated: loading")
                     onProgress()
                 }
                 is Resources.Success -> {
+                    viewModel.sourcesState = Constants.SUCCESS
                     Log.d(TAG, "onViewCreated: success ${resources.data.toString()}")
                     onSuccess(resources.data)
                 }
                 is Resources.Error -> {
+                    viewModel.sourcesState = Constants.ERROR
                     Log.d(TAG, "onViewCreated: error ${resources.toString()}")
                     onFailure(resources.message ?: "")
                 }

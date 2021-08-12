@@ -15,7 +15,7 @@
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="?actionBarSize"
             android:id="@+id/toolbar_search"
             app:contentInsetLeft="0dp"
             app:contentInsetRight="0dp"
@@ -37,13 +37,14 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="4dp"
                     android:maxLines="1"
+                    android:ellipsize="end"
                     android:textColor="@android:color/black"
                     android:layout_toStartOf="@+id/search_image"
                     android:hint="Search"
                     android:background="@android:color/transparent"
                     android:layout_centerVertical="true"
                     android:id="@+id/search_field"
-                    android:editable="false"
+                    android:inputType="none"
                     android:autofillHints="true" />
 
                 <ImageView

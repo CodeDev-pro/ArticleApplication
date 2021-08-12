@@ -22,6 +22,7 @@ import com.main.notificationapp.ui.activities.MainActivity
 import com.main.notificationapp.ui.adapters.NewsAdapter
 import com.main.notificationapp.ui.adapters.NewsItemClickListener
 import com.main.notificationapp.ui.viewmodels.MainViewModel
+import com.main.notificationapp.utils.Constants
 import com.main.notificationapp.utils.Resources
 import com.main.notificationapp.utils.SharedResources
 import com.main.notificationapp.utils.SharedResources.observeAndExecute
@@ -34,23 +35,28 @@ private const val TAG = "SearchNewsFragment"
 
 @AndroidEntryPoint
 class SearchNewsFragment : Fragment(R.layout.fragment_search_news), NewsItemClickListener {
-    // TODO: Rename and change types of parameters
 
     private lateinit var viewModel: MainViewModel
     lateinit var adapter: NewsAdapter
     private var _binding: FragmentSearchNewsBinding? = null
     private val binding get() = _binding!!
+    var searchString = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentSearchNewsBinding.bind(view)
-        adapter = NewsAdapter(isSavedFragment = true)
-        viewModel = (activity as MainActivity).viewModel
-        setUpRecyclerView()
-        binding.lifecycleOwner = this
-        binding.refreshLayout.setOnClickListener {
+        (activity as MainActivity).supportActionBar?.hide()
 
+        _binding = FragmentSearchNewsBinding.bind(view)
+
+        viewModel = (activity as MainActivity).viewModel
+        adapter = NewsAdapter(isSavedFragment = true, lifecycleOwner = viewLifecycleOwner, viewModel)
+        setUpRecyclerView()
+        adapter.itemClickListener = this
+        binding.lifecycleOwner = this
+
+        binding.buttonOk.setOnClickListener {
+            viewModel.safeSearchArticleCall(searchString, 1)
         }
 
         var job: Job? = null
@@ -58,6 +64,7 @@ class SearchNewsFragment : Fragment(R.layout.fragment_search_news), NewsItemClic
             job?.cancel()
             if (it != ""){
                 job = lifecycleScope.launch {
+                    searchString = it
                     delay(1000L)
                     viewModel.safeSearchArticleCall(it, 1)
                 }
@@ -70,13 +77,16 @@ class SearchNewsFragment : Fragment(R.layout.fragment_search_news), NewsItemClic
             when(resources) {
                 is Resources.Loading -> {
                     Log.d(TAG, "onViewCreated: loading")
+                    viewModel.searchState = Constants.LOADING
                     onProgress()
                 }
                 is Resources.Success -> {
+                    viewModel.searchState = Constants.SUCCESS
                     Log.d(TAG, "onViewCreated: ${resources.data.toString()}")
                     onSuccess(resources.data)
                 }
                 is Resources.Error -> {
+                    viewModel.searchState = Constants.ERROR
                     Log.d(TAG, "onViewCreated: error ${resources}")
                     onFailure(resources.message ?: "")
                 }
